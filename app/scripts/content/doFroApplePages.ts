@@ -1,4 +1,4 @@
-import { sleep, changeInputValue, getElemByID, restoreFromStorage } from '../../shared/util'
+import { sleep, changeInputValue, getElemByID, getElemBySelectorAndText, restoreFromStorage } from '../../shared/util'
 import {
     applePageUrl,
     pageElementsId,
@@ -110,7 +110,7 @@ const doFroApplePages = async (url?: string) => {
         const s_value = queryString.get('_s') || ''
         // 选择门店
         if (s_value.includes('fulfillment')) {
-            let iwantpickup = getElemByID(checkoutElems.fulfillment.selectPickupButton)
+            let iwantpickup = getElemBySelectorAndText('div.rc-segmented-control-text', '我要取货')
             if (!iwantpickup && url) {
                 location.href = url
                 return

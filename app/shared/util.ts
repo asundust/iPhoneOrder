@@ -46,6 +46,17 @@ export const getElemByID = (idname: string) => {
     return document.getElementById(idname) || document.querySelector(`#${idname}`) || null
 }
 
+export const getElemBySelectorAndText = (selector: string, text: string) => {
+    const allElems = Array.from(document.querySelectorAll(selector))
+    if (allElems.length) {
+        const ele = allElems.find(elem => {
+            return (elem as HTMLElement).textContent?.includes(text)
+        })
+        return ele as HTMLElement | undefined
+    }
+    return null
+}
+
 type TValue = string | Record<string, any> | Array<any> | null | number | boolean
 
 export const saveToStorage = async <T extends TValue>(tValue: T, storeName: string): Promise<void> => {
