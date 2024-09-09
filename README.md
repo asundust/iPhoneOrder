@@ -1,8 +1,8 @@
-## iPhoneOrder.2023
+## iPhoneOrder
 
-<b>2023版 iPhone 自动抢购插件</b>
+<b>iPhone 自动抢购插件</b>
 
-苹果官网本身并未限制 iPhone 下单，但选择配送可能交付时间过长。该插件用于自动捡漏可门店自提的订单。
+苹果官网本身并未限制 iPhone 下单，只用于配送下单服务。~~但选择配送可能交付时间过长。该插件用于自动捡漏可门店自提的订单。~~
 
 
 <b>********** 该插件仅用于学习和交流 **********</b>
@@ -99,7 +99,7 @@ Thanks.
 <a id="install"></a>
 
 ### 安装和使用
-1. ~点击下载安装 [Release](https://github.com/loo-y/iPhoneOrder.2023/releases/)~ 请自行参照[如何自行打包](#fork_change)生成插件
+1. ~点击下载安装 [Release](https://github.com/asundust/iPhoneOrder/releases/)~ 请自行参照[如何自行打包](#fork_change)生成插件
 
 2. 解压缩到本地任意目录
 

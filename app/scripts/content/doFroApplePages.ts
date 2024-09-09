@@ -58,6 +58,18 @@ const doFroApplePages = async (url?: string) => {
         return
     }
 
+    // 购买页面
+    if (/\/shop\/buy-iphone/i.test(pathname)) {
+        console.log(`I am in buy steps`)
+        const step_value = queryString.get('step') || ''
+        console.info('step_value:' + step_value)
+        // 添加成功页面
+        if (step_value.includes('attach')) {
+            location.href = applePageUrl.shoppingCart
+            return
+        }
+    }
+
     // 在购物车页面
     if (/\/shop\/bag/i.test(pathname)) {
         let goCheckoutBtn: HTMLElement | null = getElemByID(shoppingCartElems.checkoutButton)
@@ -108,58 +120,80 @@ const doFroApplePages = async (url?: string) => {
     if (/\/shop\/checkout/.test(pathname)) {
         console.log(`I am in checkout steps`)
         const s_value = queryString.get('_s') || ''
-        // 选择门店
-        if (s_value.includes('fulfillment')) {
-            let iwantpickup = getElemBySelectorAndText('div.rc-segmented-control-text', '我要取货')
-            if (!iwantpickup && url) {
-                location.href = url
-                return
-            }
-            iwantpickup?.click()
+        console.info('s_value:' + s_value)
+        // // 选择门店
+        // if (s_value.includes('fulfillment')) {
+        //     let iwantpickup = getElemBySelectorAndText('div.rc-segmented-control-text', '我要取货')
+        //     if (!iwantpickup && url) {
+        //         location.href = url
+        //         return
+        //     }
+        //     iwantpickup?.click()
+        //
+        //     let pageInfo = await getPageInitInfo()
+        //     const { partNumber, x_aos_stk } = pageInfo || {}
+        //     console.log(`partNumber, x_aos_stk`, partNumber, x_aos_stk)
+        //     if (!partNumber || !x_aos_stk) {
+        //         // 当前页面没有信息， 则刷新一下
+        //         await sleep(iPhoneOrderConfig.stepWait, 'wait and reload')
+        //         location.reload()
+        //         return
+        //     } else {
+        //         // await goOrderSteps({
+        //         //     partNumber,
+        //         //     x_aos_stk,
+        //         //     iPhoneOrderConfig,
+        //         // })
+        //     }
+        // }
 
-            let pageInfo = await getPageInitInfo()
-            const { partNumber, x_aos_stk } = pageInfo || {}
-            console.log(`partNumber, x_aos_stk`, partNumber, x_aos_stk)
-            if (!partNumber || !x_aos_stk) {
-                // 当前页面没有信息， 则刷新一下
-                await sleep(iPhoneOrderConfig.stepWait, 'wait and reload')
-                location.reload()
-                return
-            } else {
-                await goOrderSteps({
-                    partNumber,
-                    x_aos_stk,
-                    iPhoneOrderConfig,
-                })
+        // 为我送货
+        if (s_value.includes('fulfillment-init')) {
+            // 继续填写送货地址
+            let locationElement = document.querySelector(checkoutElems.location)
+            while (true) {
+                await sleep(1);
+                const content = locationElement?.innerHTML
+                console.log(content)
+                if (content !== '选择地区') {
+                    getElemByID(checkoutElems.continuebutton)?.click()
+                    break
+                }
             }
         }
 
-        // 填写取货信息，个人信息 页面
-        if (s_value.includes('pickupcontact')) {
-            let checkoutSelectPrefix = `checkout.pickupContact.selfPickupContact.selfContact.address`
+        // // 填写取货信息，个人信息 页面
+        // if (s_value.includes('pickupcontact')) {
+        //     let checkoutSelectPrefix = `checkout.pickupContact.selfPickupContact.selfContact.address`
+        //
+        //     let lastNameDom = getElemByID(checkoutElems.pickupContact.lastName) as HTMLInputElement,
+        //         firstNameDom = getElemByID(checkoutElems.pickupContact.firstName) as HTMLInputElement,
+        //         emailAddressDom = getElemByID(checkoutElems.pickupContact.emailAddress) as HTMLInputElement,
+        //         mobileDom = getElemByID(checkoutElems.pickupContact.mobile) as HTMLInputElement,
+        //         last4IdDom = getElemByID(checkoutElems.pickupContact.last4Id) as HTMLInputElement
+        //     // 如果当前dom不存在，说明此时页面还没有加载出来，直接刷新页面加载
+        //     if (!lastNameDom && url) {
+        //         location.href = url
+        //         return
+        //     }
+        //     changeInputValue(lastNameDom, iPhoneOrderConfig.lastName)
+        //     changeInputValue(firstNameDom, iPhoneOrderConfig.firstName)
+        //     changeInputValue(emailAddressDom, iPhoneOrderConfig.appleId)
+        //     changeInputValue(mobileDom, iPhoneOrderConfig.mobile)
+        //     changeInputValue(last4IdDom, iPhoneOrderConfig.last4code)
+        //     getElemByID(checkoutElems.continuebutton)?.click()
+        //     // document.querySelector(`#rs-checkout-continue-button-bottom`).click()
+        //     return
+        // }
 
-            let lastNameDom = getElemByID(checkoutElems.pickupContact.lastName) as HTMLInputElement,
-                firstNameDom = getElemByID(checkoutElems.pickupContact.firstName) as HTMLInputElement,
-                emailAddressDom = getElemByID(checkoutElems.pickupContact.emailAddress) as HTMLInputElement,
-                mobileDom = getElemByID(checkoutElems.pickupContact.mobile) as HTMLInputElement,
-                last4IdDom = getElemByID(checkoutElems.pickupContact.last4Id) as HTMLInputElement
-            // 如果当前dom不存在，说明此时页面还没有加载出来，直接刷新页面加载
-            if (!lastNameDom && url) {
-                location.href = url
-                return
-            }
-            changeInputValue(lastNameDom, iPhoneOrderConfig.lastName)
-            changeInputValue(firstNameDom, iPhoneOrderConfig.firstName)
-            changeInputValue(emailAddressDom, iPhoneOrderConfig.appleId)
-            changeInputValue(mobileDom, iPhoneOrderConfig.mobile)
-            changeInputValue(last4IdDom, iPhoneOrderConfig.last4code)
+        // 你的送货地址是哪里
+        if (s_value.includes('shipping-init')) {
+            // 继续选择付款方式（不知道为啥和上门的按钮是同一个）
             getElemByID(checkoutElems.continuebutton)?.click()
-            // document.querySelector(`#rs-checkout-continue-button-bottom`).click()
-            return
         }
 
         // 选择付款方式页面
-        if (s_value.includes('billing')) {
+        if (s_value.includes('billing-init')) {
             const { payBill, payInstallment } = iPhoneOrderConfig || {}
             let alipayBtnInput = getElemByID(checkoutElems.bill.alipay)
             let payBillBtnInput = getElemByID(checkoutElems.bill[payBill])
@@ -168,11 +202,25 @@ const doFroApplePages = async (url?: string) => {
 
                 if (!['wechat', 'alipay'].includes(payBill)) {
                     // 有分期需求
-                    await sleep(1.5)
-                    const dataAutom = `${payBillBtnInput.id}-${payInstallment}`.replace(`${prefixBillingoptions}.`, '')
-                    const payInstallmentBtnInput = document.querySelector(`input[data-autom="${dataAutom}"]`)
-                    console.log(`payInstallmentBtnInput`, payInstallmentBtnInput, `input[data-autom="${dataAutom}"]`)
-                    ;(payInstallmentBtnInput as HTMLInputElement)?.click()
+                    // await sleep(1)
+                    // const dataAutom = `${payBillBtnInput.id}-${payInstallment}`.replace(`${prefixBillingoptions}.`, '')
+                    // const payInstallmentBtnInput = document.querySelector(`input[data-autom="${dataAutom}"]`)
+                    // console.log(`payInstallmentBtnInput`, payInstallmentBtnInput, `input[data-autom="${dataAutom}"]`)
+                    // ;(payInstallmentBtnInput as HTMLInputElement)?.click()
+
+                    // 有分期需求
+                    // 使用一个循环来不断检查 payInstallmentBtnInput 是否为 HTMLInputElement
+                    while (true) {
+                        await sleep(1); // 每次检查前等待 1 秒
+                        const dataAutom = `${payBillBtnInput.id}-${payInstallment}`.replace(`${prefixBillingoptions}.`, '')
+                        const payInstallmentBtnInput = document.querySelector(`input[data-autom="${dataAutom}"]`)
+                        console.log(`payInstallmentBtnInput`, payInstallmentBtnInput, `input[data-autom="${dataAutom}"]`)
+                        // 如果查询到的元素是 HTMLInputElement，则跳出循环
+                        if (payInstallmentBtnInput instanceof HTMLInputElement) {
+                            payInstallmentBtnInput.click() // 点击按钮
+                            break // 跳出循环
+                        }
+                    }
                 }
             } else if (alipayBtnInput) {
                 // 获取不到就走默认的支付宝

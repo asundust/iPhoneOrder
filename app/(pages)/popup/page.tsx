@@ -62,8 +62,8 @@ const Popup = () => {
     }
 
     return (
-        <div className="mx-auto mt-1 mb-2 w-[18rem] h-[15rem]">
-            <main className="flex w-fit flex-col items-center gap-2 justify-between py-3 px-2 mx-auto mb-2 mt-2">
+        <div className="mx-auto mt-1 mb-2 w-72 h-64 rounded-2xl overflow-hidden">
+            <main className="flex w-fit flex-col items-center gap-2 justify-between py-3 px-2 mx-auto mb-2 mt-2 ">
                 <div className="flex w-full gap-3 justify-center py-1 mb-2 bg-white border-b border-solid border-slate-300">
                     <div
                         className={`flex w-40 h-9 ${'bg-indigo-600 cursor-pointer'} bg-opacity-90 border border-indigo-500 rounded-md my-2 items-center align-middle justify-center text-center min-w-min px-3 hover:shadow-md hover:bg-indigo-500`}
@@ -104,6 +104,7 @@ const Popup = () => {
 
 export default Popup
 
+// 开关
 interface ISelectItemProps {
     enabled?: boolean
     index: number

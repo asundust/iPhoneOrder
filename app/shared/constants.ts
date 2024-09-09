@@ -83,6 +83,7 @@ export const pageElementsId = {
         acceptButton: `consent-overlay-accept-button`,
     },
     checkout: {
+        location: `button.rs-edit-location-button`,
         continuebutton: `rs-checkout-continue-button-bottom`,
         fulfillment: {
             selectPickupButton: `fulfillmentOptionButtonGroup1`,

@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "iPhoneOrder.2023",
+    "name": "iPhoneOrder",
     "description": "iPhoneOrder",
     "version": "1.0",
     "permissions": ["ttsEngine","tts", "activeTab", "scripting", "contextMenus", "tabs","storage"],
