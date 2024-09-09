@@ -308,7 +308,7 @@ export default function Options() {
                     <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-3">
                             <label htmlFor="last-name" className={labelClass}>
-                                姓氏
+                                姓氏（随便填写，用不到）
                             </label>
                             <div className="mt-2">
                                 <input
@@ -325,7 +325,7 @@ export default function Options() {
 
                         <div className="sm:col-span-3">
                             <label htmlFor="first-name" className={labelClass}>
-                                名字
+                                名字（随便填写，用不到）
                             </label>
                             <div className="mt-2">
                                 <input
