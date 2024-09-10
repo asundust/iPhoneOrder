@@ -84,7 +84,7 @@ export const pageElementsId = {
     },
     buy: {
         noTradeIn: `noTradeIn_label`,
-        noAppleCare: `applecareplus_58_noapplecare_label`,
+        noAppleCare: `applecareplus_59_noapplecare_label`,
     },
     checkout: {
         continuebutton: `rs-checkout-continue-button-bottom`,

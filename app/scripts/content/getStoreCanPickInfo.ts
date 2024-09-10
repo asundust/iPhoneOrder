@@ -181,13 +181,13 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
     const locationElement = document.querySelector(`button.rs-edit-location-button`)
     if (!locationElement) return
     const { cityName, districtName, provinceName } = iPhoneOrderConfig
-    console.log(`${cityName}, ${districtName}, ${provinceName}`)
+    console.log(`config => ${cityName} ${districtName} ${provinceName}`)
     if (!cityName || !districtName || !provinceName) return
 
     // 已纠正的情况下，不需要重复点击了
     if (locationElement.textContent) {
         if (locationElement.textContent.includes(districtName) && locationElement.textContent.includes(provinceName)) {
-            console.log(`${cityName} ${districtName} ${provinceName} all right`)
+            console.log(`check right => ${cityName} ${districtName} ${provinceName}`)
             return
         }
     }
@@ -196,7 +196,7 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
     const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
     const message = {
         action: iframeMessagePass.messageAction,
-        handleMessage: '开始选择'
+        handleMessage: '开始选择省市区'
     }
     iframeWindow?.postMessage(message, '*')
 

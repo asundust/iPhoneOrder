@@ -50,6 +50,7 @@ export const getElemBySelectorAndText = (selector: string, text: string) => {
     const allElems = Array.from(document.querySelectorAll(selector))
     if (allElems.length) {
         const ele = allElems.find(elem => {
+            console.log((elem as HTMLElement).textContent)
             return (elem as HTMLElement).textContent?.includes(text)
         })
         return ele as HTMLElement | undefined
