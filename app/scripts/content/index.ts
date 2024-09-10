@@ -18,9 +18,9 @@ const addTipsToPage = () => {
     iframe.style.cssText = `
         right: 0;
         top: 100px;
-        width: 240px;
+        width: 300px;
         height: 110px;
-        z-index: 2;
+        z-index: 9999;
         position: fixed;
     `
     iframe.src = `chrome-extension://${extensionId}/dist/tips.html`

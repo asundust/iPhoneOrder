@@ -4,18 +4,17 @@ import {
     getElemByID,
     getElemBySelectorAndText,
     restoreFromStorage,
-    randomSleep
+    randomSleep,
 } from '../../shared/util'
 import {
     applePageUrl,
     pageElementsId,
     storeKeys,
     prefixBillingoptions,
-    iframeMessagePass, defaultAres,
+    iframeMessagePass,
+    defaultAres,
 } from '../../shared/constants'
-import {
-    storeSearchInPage,
-} from './getStoreCanPickInfo'
+import { storeSearchInPage } from './getStoreCanPickInfo'
 import type { IPHONEORDER_CONFIG } from '../../shared/interface'
 // import getPageInitInfo from './getPageInitInfo'
 // import goOrderSteps from './goOrderSteps'
@@ -43,7 +42,7 @@ const doFroApplePages = async (url?: string) => {
     let iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
     let message = {
         action: iframeMessagePass.messageAction,
-        handleMessage: '开始执行'
+        handleMessage: '开始执行',
     }
     iframeWindow?.postMessage(message, '*')
 
@@ -68,7 +67,12 @@ const doFroApplePages = async (url?: string) => {
     let pathname = location.pathname
     console.log(`doFroApplePages`, queryString)
 
-    const { buy: buyElems,  checkout: checkoutElems, shoppingCart: shoppingCartElems, signIn: signInElems } = pageElementsId
+    const {
+        buy: buyElems,
+        checkout: checkoutElems,
+        shoppingCart: shoppingCartElems,
+        signIn: signInElems,
+    } = pageElementsId
 
     // 登陆态过期，直接去购物车页
     if (/\/shop\/sorry/i.test(pathname)) {
@@ -84,7 +88,6 @@ const doFroApplePages = async (url?: string) => {
         console.log(`I am in buy steps`)
         while (true) {
             if (/CH\/A/i.test(location.pathname)) {
-
                 message.handleMessage = '选择“不折抵换购”'
                 iframeWindow?.postMessage(message, '*')
 
@@ -92,11 +95,14 @@ const doFroApplePages = async (url?: string) => {
                 getElemByID(buyElems.noTradeIn)?.click()
                 await sleep(0.5)
 
-                message.handleMessage = '选择“不加AppleCare+服务计划”'
+                message.handleMessage = '选择“不加AppleCare”'
                 iframeWindow?.postMessage(message, '*')
 
                 console.log(`click ID noAppleCare`)
-                let noCareElem = getElemBySelectorAndText('.rf-accessory-applecare-fullwidth-option', '不加 AppleCare+ 服务计划')
+                let noCareElem = getElemBySelectorAndText(
+                    '.rf-accessory-applecare-fullwidth-option',
+                    '不加 AppleCare+ 服务计划'
+                )
                 console.log(`noCareElem ${noCareElem}`)
                 const labelId = noCareElem?.querySelector('label')?.getAttribute('id')
                 console.log(`labelId ${labelId}`)
@@ -108,7 +114,7 @@ const doFroApplePages = async (url?: string) => {
                 let noAppleCare = null
                 let inputElement = document.querySelector(`input[name^="ao.applecare_"]`) as HTMLInputElement | null
                 if (inputElement) {
-                    noAppleCare = inputElement.value;
+                    noAppleCare = inputElement.value
                 }
                 console.log(`noAppleCare value ${noAppleCare}`)
                 if (noAppleCare === 'none') {
@@ -116,15 +122,16 @@ const doFroApplePages = async (url?: string) => {
                     let buttonElement = document.querySelector(`button[name="add-to-cart"]`) as HTMLInputElement | null
                     if (buttonElement) {
                         // ********** 发送消息给 tips page **********
-                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                            ?.contentWindow
                         const message = {
                             action: iframeMessagePass.messageAction,
-                            handleMessage: '正在添加购物车'
+                            handleMessage: '正在添加购物车',
                         }
                         iframeWindow?.postMessage(message, '*')
 
                         buttonElement?.click()
-                        break;
+                        break
                     }
                 }
             } else {
@@ -135,10 +142,11 @@ const doFroApplePages = async (url?: string) => {
                     // 添加成功页面
                     if (step_value.includes('attach')) {
                         // ********** 发送消息给 tips page **********
-                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                            ?.contentWindow
                         const message = {
                             action: iframeMessagePass.messageAction,
-                            handleMessage: '正在跳转购物车'
+                            handleMessage: '正在跳转购物车',
                         }
                         iframeWindow?.postMessage(message, '*')
 
@@ -147,10 +155,11 @@ const doFroApplePages = async (url?: string) => {
                     }
                 } else {
                     // ********** 发送消息给 tips page **********
-                    const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                    const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                        ?.contentWindow
                     const message = {
                         action: iframeMessagePass.messageAction,
-                        handleMessage: '等待用户请选择购买项'
+                        handleMessage: '等待用户请选择购买项',
                     }
                     iframeWindow?.postMessage(message, '*')
 
@@ -173,7 +182,7 @@ const doFroApplePages = async (url?: string) => {
         const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
         const message = {
             action: iframeMessagePass.messageAction,
-            handleMessage: '正在前往订单选项页面'
+            handleMessage: '正在前往订单选项页面',
         }
         iframeWindow?.postMessage(message, '*')
 
@@ -184,12 +193,11 @@ const doFroApplePages = async (url?: string) => {
 
     // 在登陆页
     if (/\/signin/i.test(pathname)) {
-
         // ********** 发送消息给 tips page **********
         const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
         const message = {
             action: iframeMessagePass.messageAction,
-            handleMessage: '正在登录'
+            handleMessage: '正在登录',
         }
         iframeWindow?.postMessage(message, '*')
 
@@ -262,37 +270,42 @@ const doFroApplePages = async (url?: string) => {
         // 为我送货
         if (s_value.includes('fulfillment-init')) {
             // 继续填写送货地址
-            const {cityName, districtName, provinceName} = iPhoneOrderConfig
+            const { cityName, districtName, provinceName } = iPhoneOrderConfig
             if (!cityName || !districtName || !provinceName) {
                 console.log(`省市区未配置`)
-                return;
+                return
             }
 
             // ********** 发送消息给 tips page **********
-            const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+            const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                ?.contentWindow
             const message = {
                 action: iframeMessagePass.messageAction,
-                handleMessage: '检查省市区'
+                handleMessage: '检查省市区',
             }
             iframeWindow?.postMessage(message, '*')
 
-            await storeSearchInPage({iPhoneOrderConfig})
+            await storeSearchInPage({ iPhoneOrderConfig })
             while (true) {
                 const locationElement = document.querySelector(`button.rs-edit-location-button`)
                 if (!locationElement) {
                     console.log(`省市区未加载完成1`)
-                    await sleep(1);
-                    continue;
+                    await sleep(1)
+                    continue
                 }
                 if (locationElement.textContent) {
-                    if (locationElement.textContent.includes(districtName) && locationElement.textContent.includes(provinceName)) {
+                    if (
+                        locationElement.textContent.includes(districtName) &&
+                        locationElement.textContent.includes(provinceName)
+                    ) {
                         console.log(`reload right => ${cityName} ${districtName} ${provinceName}`)
 
                         // ********** 发送消息给 tips page **********
-                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                            ?.contentWindow
                         const message = {
                             action: iframeMessagePass.messageAction,
-                            handleMessage: '正在前往送货详情页面'
+                            handleMessage: '正在前往送货详情页面',
                         }
                         iframeWindow?.postMessage(message, '*')
 
@@ -301,15 +314,16 @@ const doFroApplePages = async (url?: string) => {
                     }
                 }
                 // ********** 发送消息给 tips page **********
-                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                    ?.contentWindow
                 const message = {
                     action: iframeMessagePass.messageAction,
-                    handleMessage: '等待省市区加载完成'
+                    handleMessage: '等待省市区加载完成',
                 }
                 iframeWindow?.postMessage(message, '*')
 
                 console.log(`省市区未加载完成2`)
-                await sleep(1);
+                await sleep(1)
             }
         }
 
@@ -341,10 +355,11 @@ const doFroApplePages = async (url?: string) => {
         if (s_value.includes('shipping-init')) {
             while (true) {
                 // ********** 发送消息给 tips page **********
-                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                    ?.contentWindow
                 const message = {
                     action: iframeMessagePass.messageAction,
-                    handleMessage: '正在前往付款详情页面'
+                    handleMessage: '正在前往付款详情页面',
                 }
                 iframeWindow?.postMessage(message, '*')
 
@@ -353,19 +368,20 @@ const doFroApplePages = async (url?: string) => {
                 const buttonSpinner = document.querySelector(`button.button-spinner`) as HTMLInputElement | null
                 console.log(`buttonSpinner: ${buttonSpinner}`)
                 if (buttonSpinner) {
-                    break;
+                    break
                 }
-                await sleep(0.5);
+                await sleep(0.5)
             }
         }
 
         // 选择付款方式页面
         if (s_value.includes('billing-init')) {
             // ********** 发送消息给 tips page **********
-            const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+            const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                ?.contentWindow
             const message = {
                 action: iframeMessagePass.messageAction,
-                handleMessage: '正在选择付款方式'
+                handleMessage: '正在选择付款方式',
             }
 
             const { payBill, payInstallment } = iPhoneOrderConfig || {}
@@ -386,17 +402,27 @@ const doFroApplePages = async (url?: string) => {
                     // 使用一个循环来不断检查 payInstallmentBtnInput 是否为 HTMLInputElement
                     while (true) {
                         // ********** 发送消息给 tips page **********
-                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                            ?.contentWindow
                         const message = {
                             action: iframeMessagePass.messageAction,
-                            handleMessage: '正在等待分期选项加载完成'
+                            handleMessage: '正在等待分期选项加载完成',
                         }
                         iframeWindow?.postMessage(message, '*')
 
-                        await sleep(1); // 每次检查前等待 1 秒
-                        const dataAutom = `${payBillBtnInput.id}-${payInstallment}`.replace(`${prefixBillingoptions}.`, '')
-                        const payInstallmentBtnInput = document.querySelector(`input[data-autom="${dataAutom}"]`) as HTMLInputElement | null
-                        console.log(`payInstallmentBtnInput`, payInstallmentBtnInput, `input[data-autom="${dataAutom}"]`)
+                        await sleep(1) // 每次检查前等待 1 秒
+                        const dataAutom = `${payBillBtnInput.id}-${payInstallment}`.replace(
+                            `${prefixBillingoptions}.`,
+                            ''
+                        )
+                        const payInstallmentBtnInput = document.querySelector(
+                            `input[data-autom="${dataAutom}"]`
+                        ) as HTMLInputElement | null
+                        console.log(
+                            `payInstallmentBtnInput`,
+                            payInstallmentBtnInput,
+                            `input[data-autom="${dataAutom}"]`
+                        )
                         // 如果查询到的元素是 HTMLInputElement，则跳出循环
                         if (payInstallmentBtnInput instanceof HTMLInputElement) {
                             payInstallmentBtnInput.click() // 点击按钮
@@ -425,10 +451,11 @@ const doFroApplePages = async (url?: string) => {
             let orderBtn = getElemByID(checkoutElems.continuebutton)
             if (orderBtn) {
                 // ********** 发送消息给 tips page **********
-                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+                const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)
+                    ?.contentWindow
                 const message = {
                     action: iframeMessagePass.messageAction,
-                    handleMessage: '正在下单'
+                    handleMessage: '正在下单',
                 }
                 iframeWindow?.postMessage(message, '*')
 

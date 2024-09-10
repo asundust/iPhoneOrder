@@ -18,11 +18,11 @@ const Tips = () => {
 
     const bgTransparent = `body{background: transparent}`
     return (
-        <main
-            className="flex w-150 h-fit flex-col text-gray-700 bg-opacity-70 items-center gap-1 px-2 justify-between py-2 mx-auto rounded-lg bg-slate-100 text-base font-bold cursor-pointer shadow-slate-500/50 shadow-lg">
+        <main className="flex w-full h-fit flex-col text-gray-700 bg-opacity-70 items-center gap-1 px-2 justify-between py-2 mx-auto rounded-lg bg-slate-100 text-base font-bold shadow-slate-500/50 shadow-lg pointer-events-none">
             <style>{bgTransparent}</style>
             <div className="flex flex-row h-8">
-                <span className="text-indigo-700">当前：</span>{handleMessage}
+                <span className="text-indigo-700">当前：</span>
+                {handleMessage}
             </div>
         </main>
     )
