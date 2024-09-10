@@ -1,5 +1,5 @@
 import { IPHONEORDER_CONFIG } from '../../shared/interface'
-import { applePageUrl, iPhoneModels, fetchHeaders, defaultAres } from '../../shared/constants'
+import { applePageUrl, iPhoneModels, fetchHeaders, defaultAres , iframeMessagePass } from '../../shared/constants'
 import {sleep, randomSleep, getElemByID} from '../../shared/util'
 import crossfetch from 'cross-fetch'
 import { each as _each, map as _map } from 'lodash'
@@ -192,6 +192,14 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
         }
     }
 
+    // ********** 发送消息给 tips page **********
+    const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+    const message = {
+        action: iframeMessagePass.messageAction,
+        handleMessage: '开始选择'
+    }
+    iframeWindow?.postMessage(message, '*')
+
     await randomSleep({ min: 0, max: randomRange })
     const isSelectionOpen = document.querySelectorAll(`li[role="listitem"]>button`)?.length > 0
 
@@ -200,9 +208,16 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
     }
 
     await randomSleep({ min: 0, max: randomRange })
-
     let hasTheProvince = false
     if (provinceName) {
+        // ********** 发送消息给 tips page **********
+        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+        const message = {
+            action: iframeMessagePass.messageAction,
+            handleMessage: '开始选择省'
+        }
+        iframeWindow?.postMessage(message, '*')
+
         while (true) {
             const provinceItems = document.querySelectorAll(`li[role="listitem"]>button`)
             _each(provinceItems, p_item => {
@@ -222,6 +237,14 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
 
     let hasTheCityName = false
     if (hasTheProvince && cityName && cityName != provinceName) {
+        // ********** 发送消息给 tips page **********
+        const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+        const message = {
+            action: iframeMessagePass.messageAction,
+            handleMessage: '开始选择市'
+        }
+        iframeWindow?.postMessage(message, '*')
+
         while (true) {
             const cityItems = document.querySelectorAll(`li[role="listitem"]>button`)
             _each(cityItems, p_item => {
@@ -242,6 +265,14 @@ export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPag
     let hasTheDistrictName = false
     if (districtName) {
         while (true) {
+            // ********** 发送消息给 tips page **********
+            const iframeWindow = (document?.getElementById(iframeMessagePass.iframeID) as HTMLIFrameElement)?.contentWindow
+            const message = {
+                action: iframeMessagePass.messageAction,
+                handleMessage: '开始选择区'
+            }
+            iframeWindow?.postMessage(message, '*')
+
             const districtItems = document.querySelectorAll(`li[role="listitem"]>button`)
             _each(districtItems, p_item => {
                 if (p_item?.textContent?.includes(districtName)) {

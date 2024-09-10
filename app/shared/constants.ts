@@ -187,7 +187,7 @@ export const defaultPayinstallmentTotal = [
     {
         id: 24,
         name: '24期',
-        includes: [billTypeKeys.ccb, billTypeKeys.cmb, billTypeKeys.icbc],
+        includes: [billTypeKeys.ccb, billTypeKeys.cmb, billTypeKeys.huabei, billTypeKeys.icbc],
     },
 ]
 
@@ -237,4 +237,5 @@ export const CHECKOUT_STEPS = {
 export const iframeMessagePass = {
     iframeID: 'tips_iframe',
     messageAction: 'updateFetchCount',
+    handleMessage: 'handleMessage',
 }
