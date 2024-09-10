@@ -1,11 +1,21 @@
-import { sleep, changeInputValue, getElemByID, getElemBySelectorAndText, restoreFromStorage } from '../../shared/util'
+import {
+    sleep,
+    changeInputValue,
+    getElemByID,
+    getElemBySelectorAndText,
+    restoreFromStorage,
+    randomSleep
+} from '../../shared/util'
 import {
     applePageUrl,
     pageElementsId,
     storeKeys,
     prefixBillingoptions,
-    iframeMessagePass,
+    iframeMessagePass, defaultAres,
 } from '../../shared/constants'
+import {
+    storeSearchInPage,
+} from './getStoreCanPickInfo'
 import type { IPHONEORDER_CONFIG } from '../../shared/interface'
 import getPageInitInfo from './getPageInitInfo'
 import goOrderSteps from './goOrderSteps'
@@ -84,18 +94,16 @@ const doFroApplePages = async (url?: string) => {
                     }
                 }
             } else {
-                if (/\/shop\/buy-iphone/i.test(pathname)) {
-                    const step_value = queryString.get('step') || ''
-                    if (step_value) {
-                        console.log(`I am in buy after handle steps`)
-                        console.info('step_value:' + step_value)
-                        // 添加成功页面
-                        if (step_value.includes('attach')) {
-                            location.href = applePageUrl.shoppingCart
-                            return
-                        }
+                const step_value = queryString.get('step') || ''
+                if (step_value) {
+                    console.log(`I am in buy after handle steps`)
+                    console.info('step_value:' + step_value)
+                    // 添加成功页面
+                    if (step_value.includes('attach')) {
+                        location.href = applePageUrl.shoppingCart
+                        return
                     }
-                } else {
+                }else {
                     await sleep(1)
                     console.log(`wait for select`)
                 }
@@ -126,9 +134,10 @@ const doFroApplePages = async (url?: string) => {
             dataHandleByAppleCheckbox.checked = true
             dataOutSideMyCountryCheckbox.click()
             dataOutSideMyCountryCheckbox.checked = true
-            getElemByID(signInElems.acceptButton)?.click()
             await sleep(0.5)
+            getElemByID(signInElems.acceptButton)?.click()
         }
+        await sleep(0.5)
 
         if (iPhoneOrderConfig.appleId && iPhoneOrderConfig.password) {
             let addIdDom = getElemByID(signInElems.appleIdInput) as HTMLInputElement
@@ -137,12 +146,14 @@ const doFroApplePages = async (url?: string) => {
             if (addIdDom && addCodeDom && goLoginBtn) {
                 changeInputValue(addIdDom, iPhoneOrderConfig.appleId)
                 changeInputValue(addCodeDom, iPhoneOrderConfig.password)
+                await sleep(0.5)
                 goLoginBtn.click()
             }
         } else {
             // 没有账号信息就以游客登录
             let guestLoginBtn = getElemByID(signInElems.guestLoginButon)
             if (guestLoginBtn) {
+                await sleep(0.5)
                 console.log(`click guestLoginBtn`, guestLoginBtn)
                 guestLoginBtn.click()
             }
@@ -183,15 +194,28 @@ const doFroApplePages = async (url?: string) => {
         // 为我送货
         if (s_value.includes('fulfillment-init')) {
             // 继续填写送货地址
-            let locationElement = document.querySelector(`button.rs-edit-location-button`)
+            const {cityName, districtName, provinceName} = iPhoneOrderConfig
+            if (!cityName || !districtName || !provinceName) {
+                console.log(`省市区未配置`)
+                return;
+            }
+            await storeSearchInPage({iPhoneOrderConfig})
             while (true) {
-                await sleep(1);
-                const content = locationElement?.innerHTML
-                console.log(content)
-                if (content !== '选择地区') {
-                    getElemByID(checkoutElems.continuebutton)?.click()
-                    break
+                const locationElement = document.querySelector(`button.rs-edit-location-button`)
+                if (!locationElement) {
+                    console.log(`省市区未加载完成1`)
+                    await sleep(1);
+                    continue;
                 }
+                if (locationElement.textContent) {
+                    if (locationElement.textContent.includes(districtName) && locationElement.textContent.includes(provinceName)) {
+                        console.log(`${cityName} ${districtName} ${provinceName} all right`)
+                        getElemByID(checkoutElems.continuebutton)?.click()
+                        break
+                    }
+                }
+                console.log(`省市区未加载完成2`)
+                await sleep(1);
             }
         }
 
@@ -221,6 +245,7 @@ const doFroApplePages = async (url?: string) => {
 
         // 你的送货地址是哪里
         if (s_value.includes('shipping-init')) {
+            await sleep(1);
             // 继续选择付款方式（不知道为啥和上门的按钮是同一个）
             getElemByID(checkoutElems.continuebutton)?.click()
         }

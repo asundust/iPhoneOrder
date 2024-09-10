@@ -1,6 +1,6 @@
 import { IPHONEORDER_CONFIG } from '../../shared/interface'
 import { applePageUrl, iPhoneModels, fetchHeaders, defaultAres } from '../../shared/constants'
-import { sleep, randomSleep } from '../../shared/util'
+import {sleep, randomSleep, getElemByID} from '../../shared/util'
 import crossfetch from 'cross-fetch'
 import { each as _each, map as _map } from 'lodash'
 
@@ -176,18 +176,18 @@ interface IStoreSearchInPageProps {
     iPhoneOrderConfig: IPHONEORDER_CONFIG
 }
 
-const randomRange = 3
-const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPageProps) => {
-    const storeSearchDataAutom = `fulfillment-pickup-store-search-button`
-    const storeSearchBtn = document.querySelector(`button[data-autom="${storeSearchDataAutom}"]`)
-    if (!storeSearchBtn) return
+const randomRange = 2
+export const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPageProps) => {
+    const locationElement = document.querySelector(`button.rs-edit-location-button`)
+    if (!locationElement) return
     const { cityName, districtName, provinceName } = iPhoneOrderConfig
-
+    console.log(`${cityName}, ${districtName}, ${provinceName}`)
     if (!cityName || !districtName || !provinceName) return
 
     // 已纠正的情况下，不需要重复点击了
-    if (storeSearchBtn.textContent) {
-        if (storeSearchBtn.textContent.includes(districtName) && storeSearchBtn.textContent.includes(provinceName)) {
+    if (locationElement.textContent) {
+        if (locationElement.textContent.includes(districtName) && locationElement.textContent.includes(provinceName)) {
+            console.log(`${cityName} ${districtName} ${provinceName} all right`)
             return
         }
     }
@@ -196,56 +196,65 @@ const storeSearchInPage = async ({ iPhoneOrderConfig }: IStoreSearchInPageProps)
     const isSelectionOpen = document.querySelectorAll(`li[role="listitem"]>button`)?.length > 0
 
     if (!isSelectionOpen) {
-        ;(storeSearchBtn as HTMLButtonElement).click()
+        ;(locationElement as HTMLButtonElement).click()
     }
 
     await randomSleep({ min: 0, max: randomRange })
 
-    const provinceTabBtn = document.getElementById(
-        'checkout.fulfillment.pickupTab.pickup.storeLocator.address.stateCitySelectorForCheckout.state'
-    )
-    provinceTabBtn?.click()
-
     let hasTheProvince = false
     if (provinceName) {
-        const provinceItems = document.querySelectorAll(`li[role="listitem"]>button`)
-        _each(provinceItems, p_item => {
-            if (p_item?.textContent?.includes(provinceName)) {
-                ;(p_item as HTMLButtonElement)?.click()
-                hasTheProvince = true
-                return false
+        while (true) {
+            const provinceItems = document.querySelectorAll(`li[role="listitem"]>button`)
+            _each(provinceItems, p_item => {
+                if (p_item?.textContent?.includes(provinceName)) {
+                    ;(p_item as HTMLButtonElement)?.click()
+                    hasTheProvince = true
+                    return false
+                }
+            })
+            if (hasTheProvince) {
+                break
             }
-        })
-        await randomSleep({ min: 0, max: randomRange })
+            console.log(`wait loading province`)
+            await randomSleep({ min: 0, max: randomRange })
+        }
     }
 
-    const cityTabBtn = document.getElementById(
-        `checkout.fulfillment.pickupTab.pickup.storeLocator.address.stateCitySelectorForCheckout.city`
-    )
-    cityTabBtn?.click()
-    if (hasTheProvince && cityName && cityName != provinceName && cityTabBtn) {
-        const cityItems = document.querySelectorAll(`li[role="listitem"]>button`)
-        _each(cityItems, p_item => {
-            if (p_item?.textContent?.includes(cityName)) {
-                ;(p_item as HTMLButtonElement)?.click()
-                return false
+    let hasTheCityName = false
+    if (hasTheProvince && cityName && cityName != provinceName) {
+        while (true) {
+            const cityItems = document.querySelectorAll(`li[role="listitem"]>button`)
+            _each(cityItems, p_item => {
+                if (p_item?.textContent?.includes(cityName)) {
+                    ;(p_item as HTMLButtonElement)?.click()
+                    hasTheCityName = true
+                    return false
+                }
+            })
+            if (hasTheCityName) {
+                break
             }
-        })
-        await randomSleep({ min: 0, max: randomRange })
+            console.log(`wait loading city`)
+            await randomSleep({ min: 0, max: randomRange })
+        }
     }
 
-    const districtTabBtn = document.getElementById(
-        `checkout.fulfillment.pickupTab.pickup.storeLocator.address.stateCitySelectorForCheckout.district`
-    )
-    districtTabBtn?.click()
-    if (districtName && districtTabBtn) {
-        const districtItems = document.querySelectorAll(`li[role="listitem"]>button`)
-        _each(districtItems, p_item => {
-            if (p_item?.textContent?.includes(districtName)) {
-                ;(p_item as HTMLButtonElement)?.click()
-                return false
+    let hasTheDistrictName = false
+    if (districtName) {
+        while (true) {
+            const districtItems = document.querySelectorAll(`li[role="listitem"]>button`)
+            _each(districtItems, p_item => {
+                if (p_item?.textContent?.includes(districtName)) {
+                    ;(p_item as HTMLButtonElement)?.click()
+                    hasTheDistrictName = true
+                    return false
+                }
+            })
+            if (hasTheDistrictName) {
+                break
             }
-        })
-        await randomSleep({ min: 0, max: randomRange })
+            console.log(`wait loading district`)
+            await randomSleep({min: 0, max: randomRange})
+        }
     }
 }

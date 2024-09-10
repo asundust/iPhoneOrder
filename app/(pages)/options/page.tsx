@@ -436,7 +436,7 @@ export default function Options() {
 
                         <div className="sm:col-span-2 sm:col-start-1">
                             <label htmlFor="province-list" className={labelClass}>
-                                省份（随便填写，用不到）
+                                省份
                             </label>
                             <div className="mt-2">
                                 <DropListBox
@@ -450,7 +450,7 @@ export default function Options() {
 
                         <div className="sm:col-span-2">
                             <label htmlFor="city-list" className={labelClass}>
-                                城市（随便填写，用不到）
+                                城市
                             </label>
                             <div className="mt-2">
                                 <DropListBox
@@ -464,7 +464,7 @@ export default function Options() {
 
                         <div className="sm:col-span-2">
                             <label htmlFor="district-list" className={labelClass}>
-                                区名（随便填写，用不到）
+                                区名
                             </label>
                             <div className="mt-2">
                                 <DropListBox
