@@ -82,8 +82,11 @@ export const pageElementsId = {
         dataOutSideMyCountryCheckbox: `signIn.consentOverlay.dataOutSideMyCountry`,
         acceptButton: `consent-overlay-accept-button`,
     },
+    buy: {
+        noTradeIn: `noTradeIn_label`,
+        noAppleCare: `applecareplus_58_noapplecare_label`,
+    },
     checkout: {
-        location: `button.rs-edit-location-button`,
         continuebutton: `rs-checkout-continue-button-bottom`,
         fulfillment: {
             selectPickupButton: `fulfillmentOptionButtonGroup1`,

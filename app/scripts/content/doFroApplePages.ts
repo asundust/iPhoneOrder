@@ -50,7 +50,7 @@ const doFroApplePages = async (url?: string) => {
     let pathname = location.pathname
     console.log(`doFroApplePages`, queryString)
 
-    const { checkout: checkoutElems, shoppingCart: shoppingCartElems, signIn: signInElems } = pageElementsId
+    const { buy: buyElems,  checkout: checkoutElems, shoppingCart: shoppingCartElems, signIn: signInElems } = pageElementsId
 
     // 登陆态过期，直接去购物车页
     if (/\/shop\/sorry/i.test(pathname)) {
@@ -59,14 +59,47 @@ const doFroApplePages = async (url?: string) => {
     }
 
     // 购买页面
-    if (/\/shop\/buy-iphone/i.test(pathname)) {
+    if (/\/shop\/buy-iphone\/iphone-/i.test(pathname)) {
         console.log(`I am in buy steps`)
-        const step_value = queryString.get('step') || ''
-        console.info('step_value:' + step_value)
-        // 添加成功页面
-        if (step_value.includes('attach')) {
-            location.href = applePageUrl.shoppingCart
-            return
+        while (true) {
+            if (/CH\/A/i.test(location.pathname)) {
+                console.log(`click ID noTradeIn`)
+                getElemByID(buyElems.noTradeIn)?.click()
+                await sleep(0.5)
+                console.log(`click ID noAppleCare`)
+                getElemByID(buyElems.noAppleCare)?.click()
+                await sleep(0.5)
+                let noAppleCare = null
+                let inputElement = document.querySelector(`input[name="ao.applecare_58"]`) as HTMLInputElement | null
+                if (inputElement) {
+                    noAppleCare = inputElement.value;
+                }
+                console.log(`noAppleCare value ${noAppleCare}`)
+                if (noAppleCare === 'none') {
+                    await sleep(0.5)
+                    let buttonElement = document.querySelector(`button[name="add-to-cart"]`) as HTMLInputElement | null
+                    if (buttonElement) {
+                        buttonElement?.click()
+                        break;
+                    }
+                }
+            } else {
+                if (/\/shop\/buy-iphone/i.test(pathname)) {
+                    const step_value = queryString.get('step') || ''
+                    if (step_value) {
+                        console.log(`I am in buy after handle steps`)
+                        console.info('step_value:' + step_value)
+                        // 添加成功页面
+                        if (step_value.includes('attach')) {
+                            location.href = applePageUrl.shoppingCart
+                            return
+                        }
+                    }
+                } else {
+                    await sleep(1)
+                    console.log(`wait for select`)
+                }
+            }
         }
     }
 
@@ -150,7 +183,7 @@ const doFroApplePages = async (url?: string) => {
         // 为我送货
         if (s_value.includes('fulfillment-init')) {
             // 继续填写送货地址
-            let locationElement = document.querySelector(checkoutElems.location)
+            let locationElement = document.querySelector(`button.rs-edit-location-button`)
             while (true) {
                 await sleep(1);
                 const content = locationElement?.innerHTML
