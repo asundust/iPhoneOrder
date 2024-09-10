@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { iframeMessagePass } from '@/app/shared/constants'
 
 const Tips = () => {
-    const [handleMessage, setHandleMessage] = useState(0)
+    const [handleMessage, setHandleMessage] = useState('-')
     // const [fetchCount, setFetchCount] = useState(0)
     // const [beforeReload, setBeforeReload] = useState(50)
     useEffect(() => {
